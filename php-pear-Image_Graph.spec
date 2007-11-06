@@ -13,7 +13,7 @@
 Summary:	A package for displaying (numerical) data as a graph/chart/plot
 Name:		%{name}
 Version:	0.7.2
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	PHP License
 Group:		Development/PHP
 URL:		http://pear.php.net/package/Image_Graph
@@ -68,20 +68,20 @@ install -m0644 package.xml %{buildroot}%{pear_phpdir}/packages/%{rname}.xml
 
 %post
 if [ "$1" = "1" ]; then
-	if [ -x %{_bindir}/pear -a -f %{_datadir}/pear/packages/%{_pearname}.xml ]; then
-		%{_bindir}/pear install --nodeps -r %{_datadir}/pear/packages/%{_pearname}.xml
+	if [ -x %{_bindir}/pear -a -f %{_datadir}/pear/packages/%{rname}.xml ]; then
+		%{_bindir}/pear install --nodeps -r %{_datadir}/pear/packages/%{rname}.xml
 	fi
 fi
 if [ "$1" = "2" ]; then
-	if [ -x %{_bindir}/pear -a -f %{_datadir}/pear/packages/%{_pearname}.xml ]; then
-		%{_bindir}/pear upgrade -f --nodeps -r %{_datadir}/pear/packages/%{_pearname}.xml
+	if [ -x %{_bindir}/pear -a -f %{_datadir}/pear/packages/%{rname}.xml ]; then
+		%{_bindir}/pear upgrade -f --nodeps -r %{_datadir}/pear/packages/%{rname}.xml
 	fi
 fi
 
 %preun
 if [ "$1" = 0 ]; then
-	if [ -x %{_bindir}/pear -a -f %{_datadir}/pear/packages/%{_pearname}.xml ]; then
-		%{_bindir}/pear uninstall --nodeps -r %{_pearname}
+	if [ -x %{_bindir}/pear -a -f %{_datadir}/pear/packages/%{rname}.xml ]; then
+		%{_bindir}/pear uninstall --nodeps -r %{rname}
 	fi
 fi
 
@@ -143,5 +143,3 @@ fi
 %attr(0644,root,root) %{pear_docdir}/Image/Graph/examples/*.png
 %attr(0644,root,root) %{pear_docdir}/Image/Graph/examples/data/*.txt
 %attr(0644,root,root) %{pear_phpdir}/packages/%{rname}.xml
-
-
