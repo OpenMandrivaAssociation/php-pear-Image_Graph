@@ -25,7 +25,6 @@ Requires(preun): php-gd
 Requires:	php-pear
 BuildArch:	noarch
 BuildRequires:	dos2unix
-BuildRoot:	%{_tmppath}/%{name}-buildroot
 
 %description
 Image_Graph provides a set of classes that creates
