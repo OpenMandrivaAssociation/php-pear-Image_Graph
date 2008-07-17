@@ -13,7 +13,7 @@
 Summary:	A package for displaying (numerical) data as a graph/chart/plot
 Name:		%{name}
 Version:	0.7.2
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	PHP License
 Group:		Development/PHP
 URL:		http://pear.php.net/package/Image_Graph
@@ -25,7 +25,7 @@ Requires(preun): php-gd
 Requires:	php-pear
 BuildArch:	noarch
 BuildRequires:	dos2unix
-BuildRoot:	%{_tmppath}/%{name}-buildroot
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 Image_Graph provides a set of classes that creates
