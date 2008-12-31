@@ -13,7 +13,7 @@
 Summary:	A package for displaying (numerical) data as a graph/chart/plot
 Name:		%{name}
 Version:	0.7.2
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	PHP License
 Group:		Development/PHP
 URL:		http://pear.php.net/package/Image_Graph
