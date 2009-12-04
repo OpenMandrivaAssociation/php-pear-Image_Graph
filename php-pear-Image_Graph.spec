@@ -1,31 +1,23 @@
-%define name php-pear-Image_Graph
-%define rname Image_Graph
+%define		_class		Image
+%define		_subclass	Graph
+%define		upstream_name	%{_class}_%{_subclass}
 
-%define _provides_exceptions pear(docs
-%define _requires_exceptions pear(Image/Graph/Color.php)\\|pear(Image/Canvas.php)
-
-%define pear_phpdir %{_datadir}/pear
-%define pear_docdir %{_datadir}/pear/docs
-%define pear_extdir %{_libdir}/php/extensions
-%define pear_datadir %{_datadir}/pear/data
-%define pear_testdir %{_datadir}/pear/tests
-
-Summary:	A package for displaying (numerical) data as a graph/chart/plot
-Name:		%{name}
+Name:		php-pear-%{upstream_name}
 Version:	0.7.2
-Release:	%mkrel 6
+Release:	%mkrel 7
+Summary:	A package for displaying (numerical) data as a graph/chart/plot
 License:	PHP License
 Group:		Development/PHP
 URL:		http://pear.php.net/package/Image_Graph
-Source0:	http://pear.php.net/get/%{rname}-%{version}.tar.bz2
+Source0:	http://download.pear.php.net/package/%{upstream_name}-%{version}.tar.bz2
 Requires(post): php-pear
 Requires(preun): php-pear
 Requires(post): php-gd
 Requires(preun): php-gd
 Requires:	php-pear
 BuildArch:	noarch
-BuildRequires:	dos2unix
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+BuildRequires:	php-pear
+BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 %description
 Image_Graph provides a set of classes that creates
@@ -42,104 +34,43 @@ is compatible with both PHP4 and PHP5 and can be used with both
 GD1 and GD2 (GD2 is recommended)
 
 %prep
-
-%setup -q -n %rname-%version
-mv ../package.xml .
-
-find . -type d -exec chmod 755 {} \;
-find . -type f -exec chmod 644 {} \;
-find -type f | grep -v "\.gif" | grep -v "\.png" | grep -v "\.jpg" | xargs dos2unix -U
+%setup -q -c
+mv package.xml %{upstream_name}-%{version}/%{upstream_name}.xml
 
 %build
 
 %install
-[ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
-install -d %{buildroot}%{pear_phpdir}/Image/Graph
-install -d %{buildroot}%{pear_phpdir}/packages
-install -d %{buildroot}%{pear_docdir}/Image/Graph/examples
+cd %{upstream_name}-%{version}
+pear install --nodeps --packagingroot %{buildroot} %{upstream_name}.xml
+rm -rf %{buildroot}%{_datadir}/pear/.??*
 
-install -m0644 Graph.php %{buildroot}%{pear_phpdir}/Image/Graph.php
-cp -aRf Graph/* %{buildroot}%{pear_phpdir}/Image/Graph/
-cp -aRf docs/examples/* %{buildroot}%{pear_docdir}/Image/Graph/examples/
+rm -rf %{buildroot}%{_datadir}/pear/docs
+rm -rf %{buildroot}%{_datadir}/pear/tests
 
-find %{buildroot} -type f -exec sed -i 's|^#!/usr/local/bin/php|#!/usr/bin/php|' {} \;
-install -m0644 package.xml %{buildroot}%{pear_phpdir}/packages/%{rname}.xml
-
-%post
-if [ "$1" = "1" ]; then
-	if [ -x %{_bindir}/pear -a -f %{_datadir}/pear/packages/%{rname}.xml ]; then
-		%{_bindir}/pear install --nodeps -r %{_datadir}/pear/packages/%{rname}.xml
-	fi
-fi
-if [ "$1" = "2" ]; then
-	if [ -x %{_bindir}/pear -a -f %{_datadir}/pear/packages/%{rname}.xml ]; then
-		%{_bindir}/pear upgrade -f --nodeps -r %{_datadir}/pear/packages/%{rname}.xml
-	fi
-fi
-
-%preun
-if [ "$1" = 0 ]; then
-	if [ -x %{_bindir}/pear -a -f %{_datadir}/pear/packages/%{rname}.xml ]; then
-		%{_bindir}/pear uninstall --nodeps -r %{rname}
-	fi
-fi
+install -d %{buildroot}%{_datadir}/pear/packages
+install -m 644 %{upstream_name}.xml %{buildroot}%{_datadir}/pear/packages
 
 %clean
-[ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
+
+%post
+%if %mdkversion < 201000
+pear install --nodeps --soft --force --register-only \
+    %{_datadir}/pear/packages/%{upstream_name}.xml >/dev/null || :
+%endif
+
+%preun
+%if %mdkversion < 201000
+if [ "$1" -eq "0" ]; then
+    pear uninstall --nodeps --ignore-errors --register-only \
+        %{pear_name} >/dev/null || :
+fi
+%endif
 
 %files
 %defattr(-,root,root)
-%dir %{pear_phpdir}/Image/Graph
-%dir %{pear_phpdir}/Image/Graph/Axis
-%dir %{pear_phpdir}/Image/Graph/Axis/Marker
-%dir %{pear_phpdir}/Image/Graph/DataPreprocessor
-%dir %{pear_phpdir}/Image/Graph/DataSelector
-%dir %{pear_phpdir}/Image/Graph/Dataset
-%dir %{pear_phpdir}/Image/Graph/Figure
-%dir %{pear_phpdir}/Image/Graph/Fill
-%dir %{pear_phpdir}/Image/Graph/Grid
-%dir %{pear_phpdir}/Image/Graph/Images
-%dir %{pear_phpdir}/Image/Graph/Images/Icons
-%dir %{pear_phpdir}/Image/Graph/Images/Maps
-%dir %{pear_phpdir}/Image/Graph/Layout
-%dir %{pear_phpdir}/Image/Graph/Line
-%dir %{pear_phpdir}/Image/Graph/Marker
-%dir %{pear_phpdir}/Image/Graph/Marker/Pointing
-%dir %{pear_phpdir}/Image/Graph/Plot
-%dir %{pear_phpdir}/Image/Graph/Plot/Fit
-%dir %{pear_phpdir}/Image/Graph/Plot/Smoothed
-%dir %{pear_phpdir}/Image/Graph/Plotarea
-
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Axis/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Axis/Marker/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/DataPreprocessor/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/DataSelector/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Dataset/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Figure/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Fill/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Grid/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Images/Icons/*.png
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Images/Maps/README
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Layout/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Line/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Marker/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Marker/Pointing/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Plot/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Plot/Fit/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Plot/Smoothed/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/Plotarea/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/Graph/*.php
-%attr(0644,root,root) %{pear_phpdir}/Image/*.php
-
-%dir %{pear_docdir}/Image/Graph/examples
-%dir %{pear_docdir}/Image/Graph/examples/data
-%dir %{pear_docdir}/Image/Graph/examples/images
-
-%attr(0644,root,root) %{pear_docdir}/Image/Graph/examples/*.php
-%attr(0644,root,root) %{pear_docdir}/Image/Graph/examples/*.html
-%attr(0644,root,root) %{pear_docdir}/Image/Graph/examples/images/*.png
-%attr(0644,root,root) %{pear_docdir}/Image/Graph/examples/images/*.jpg
-%attr(0644,root,root) %{pear_docdir}/Image/Graph/examples/*.png
-%attr(0644,root,root) %{pear_docdir}/Image/Graph/examples/data/*.txt
-%attr(0644,root,root) %{pear_phpdir}/packages/%{rname}.xml
+%doc %{upstream_name}-%{version}/docs/*
+%{_datadir}/pear/%{_class}
+%{_datadir}/pear/packages/%{upstream_name}.xml
