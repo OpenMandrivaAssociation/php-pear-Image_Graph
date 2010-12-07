@@ -4,7 +4,7 @@
 
 Name:		php-pear-%{upstream_name}
 Version:	0.7.2
-Release:	%mkrel 7
+Release:	%mkrel 8
 Summary:	A package for displaying (numerical) data as a graph/chart/plot
 License:	PHP License
 Group:		Development/PHP
