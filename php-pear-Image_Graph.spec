@@ -3,13 +3,13 @@
 %define		upstream_name	%{_class}_%{_subclass}
 
 Name:		php-pear-%{upstream_name}
-Version:	0.7.2
-Release:	11
+Version:	0.8.0
+Release:	1
 Summary:	A package for displaying (numerical) data as a graph/chart/plot
 License:	PHP License
 Group:		Development/PHP
 URL:		http://pear.php.net/package/Image_Graph
-Source0:	http://download.pear.php.net/package/%{upstream_name}-%{version}.tar.bz2
+Source0:	http://download.pear.php.net/package/Image_Graph-%{version}.tgz
 Requires(post): php-pear
 Requires(preun): php-pear
 Requires(post): php-gd
@@ -141,4 +141,5 @@ install -m 644 %{upstream_name}.xml %{buildroot}%{_datadir}/pear/packages
 
 * Sun May 29 2005 Oden Eriksson <oeriksson@mandriva.com> 0.4.0-1mdk
 - initial Mandriva package
+
 
